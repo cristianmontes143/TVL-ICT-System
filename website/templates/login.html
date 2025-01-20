@@ -1,28 +1,38 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
 %}
+<div class="container mt-5 ">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm p-4">
 <form method="POST">
-  <h3 align="center">Login</h3>
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input
+    <h1 align="center" class="text-black">Login</h1>
+    <div class="form-group text-black ">
+      <label for="email">Email Address</label>
+      <input
       type="email"
-      class="form-control"
+      class="form-control "
       id="email"
       name="email"
       placeholder="Enter email"
-    />
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input
+      />
+    </div>
+    <div class="form-group text-black">
+      <label for="password">Password</label>
+      <input
       type="password"
       class="form-control"
       id="password"
       name="password"
       placeholder="Enter password"
-    />
-  </div>
-  <br />
-  <button type="submit" class="btn btn-primary">Login</button>
-</form>
+      />
+    </div>
+    <br />
+    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+  </form>
+</div>
+</div>
+</div>
+</div>
 {% endblock %}
