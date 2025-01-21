@@ -1,37 +1,39 @@
-from flask import Blueprint, render_template, request, flash, jsonify
-from flask_login import login_required, current_user
-from .models import Note
-from . import db
+from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for, session
+from . import supabase
 import json
 
 views = Blueprint('views', __name__)
 
-
-@views.route('/', methods=['GET', 'POST'])
-@login_required
+@views.route('/')
 def home():
-    if request.method == 'POST': 
-        note = request.form.get('note')#Gets the note from the HTML 
+    if 'user' not in session:
+        return redirect(url_for('auth.login'))
 
-        if len(note) < 1:
-            flash('Note is too short!', category='error') 
-        else:
-            new_note = Note(data=note, user_id=current_user.id)  #providing the schema for the note 
-            db.session.add(new_note) #adding the note to the database 
-            db.session.commit()
-            flash('Note added!', category='success')
+    user = session['user']
+    
+    # Ensure 'notes' key exists
+    notes_response = supabase.table('notes').select('*').eq('user_id', user['id']).execute()
+    notes = notes_response.data if notes_response else []
 
-    return render_template("home.html", user=current_user)
+    return render_template("home.html", user=user, notes=notes)
 
+@views.route('/add-note', methods=['POST'])
+def add_note():
+    if 'user' not in session:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    note = request.form.get('note')
+    user_id = session['user']['id']
+
+    supabase.table('notes').insert({"data": note, "user_id": user_id}).execute()
+    flash('Note added!', 'success')
+    return redirect(url_for('views.home'))
 
 @views.route('/delete-note', methods=['POST'])
-def delete_note():  
-    note = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
-    noteId = note['noteId']
-    note = Note.query.get(noteId)
-    if note:
-        if note.user_id == current_user.id:
-            db.session.delete(note)
-            db.session.commit()
+def delete_note():
+    if 'user' not in session:
+        return jsonify({"error": "Unauthorized"}), 403
 
-    return jsonify({})
+    note_id = request.json.get('noteId')
+    supabase.table('notes').delete().eq('id', note_id).execute()
+    return jsonify({"success": True})

@@ -29,17 +29,12 @@
   </head>
   <body class="background-image">
     <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbar"
-      >
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse d-grid gap-2 d-md-flex justify-content-md-end " id="navbar">
         <div class="navbar-nav">
-          {% if user.is_authenticated %}
+          {% if g.user %}
           <a class="nav-item nav-link text-white bg-danger btn btn-primary btn-sm justify" id="home" href="/">Home</a>
           <a class="nav-item nav-link text-white bg-info btn btn-primary btn-sm justify" id="logout" href="/logout">Logout</a>
           {% else %}
@@ -49,6 +44,7 @@
         </div>
       </div>
     </nav>
+    
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
